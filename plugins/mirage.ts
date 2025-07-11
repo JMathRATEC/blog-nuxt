@@ -39,6 +39,19 @@ export default defineNuxtPlugin(() => {
           return post;
         });
 
+        this.put("/posts/:id", (schema, request) => {
+          const id = request.params.id;
+          const attrs = JSON.parse(request.requestBody);
+          const post = schema.find("post", id);
+          if (!post) return { error: "Post não encontrado" };
+          post.update(attrs);
+          if (typeof window !== "undefined") {
+            const allPosts = schema.all("post").models.map((m) => m.attrs);
+            localStorage.setItem("mirage-posts", JSON.stringify(allPosts));
+          }
+          return post;
+        });
+
         this.get("/posts/:id", (schema, request) =>
           schema.find("post", request.params.id)
         );
