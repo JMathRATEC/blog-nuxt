@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute, navigateTo } from '#imports';
 import { NuxtLink } from '#components';
+import { usePostsStorage } from '~/composables/usePostsStorage';
 
 const route = useRoute();
-const id = route.params.id;
+const id = route.params.id as string;
+const { getById, update } = usePostsStorage();
 
 const title = ref('');
 const body = ref('');
@@ -13,34 +15,23 @@ const errorMessage = ref('');
 const isSaving = ref(false);
 const isLoaded = ref(false);
 
-async function fetchPost() {
-  try {
-    const res: any = await $fetch(`/api/posts/${id}`);
-    console.log('POST FETCHED:', res);
-    if (!res || res.error) {
-      errorMessage.value = 'Post não encontrado.';
-      return;
-    }
-    const post = res.post ?? res;
-    title.value = post.title;
-    body.value = post.body;
-    image.value = post.image || '';
-    isLoaded.value = true;
-  } catch (e) {
-    errorMessage.value = 'Erro ao carregar o post.';
+onMounted(() => {
+  const post = getById(id);
+  if (!post) {
+    errorMessage.value = 'Post não encontrado.';
+    return;
   }
-}
-
-fetchPost();
+  title.value = post.title;
+  body.value = post.body;
+  image.value = post.image || '';
+  isLoaded.value = true;
+});
 
 async function submit() {
   errorMessage.value = '';
   isSaving.value = true;
   try {
-    await $fetch(`/api/posts/${id}` , {
-      method: 'PUT',
-      body: { title: title.value, body: body.value, image: image.value },
-    });
+    update(id, { title: title.value, body: body.value, image: image.value });
     navigateTo(`/posts/${id}`);
   } catch (e) {
     errorMessage.value = 'Erro ao salvar as alterações.';

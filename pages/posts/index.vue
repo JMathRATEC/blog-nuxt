@@ -21,13 +21,20 @@
 </template>
 
 <script setup lang="ts">
-import { usePosts } from '~/composables/usePosts';
-import { onMounted } from 'vue';
-const { posts, fetchPosts, usePagination, reset } = usePosts();
-const { page, totalPages, paginated, next, prev, setPage } = usePagination(5);
+import { usePostsStorage } from '~/composables/usePostsStorage';
+import { ref, computed } from 'vue';
 
-onMounted(async () => {
-  reset();
-  await fetchPosts();
+const { posts } = usePostsStorage();
+
+// Paginação
+const page = ref(1);
+const pageSize = 5;
+const totalPages = computed(() => Math.ceil(posts.value.length / pageSize));
+const paginated = computed(() => {
+  const start = (page.value - 1) * pageSize;
+  return posts.value.slice(start, start + pageSize);
 });
+function next() { if (page.value < totalPages.value) page.value++; }
+function prev() { if (page.value > 1) page.value--; }
+function setPage(p: number) { if (p >= 1 && p <= totalPages.value) page.value = p; }
 </script>

@@ -1,20 +1,33 @@
-import { createServer, Model } from "miragejs";
+/*
+import { createServer, Model, Response } from "miragejs";
 
 export default defineNuxtPlugin(() => {
   if (process.dev) {
     createServer({
       models: { post: Model },
       seeds(server) {
-        server.create("post", { id: "1", title: "Primeiro Post", body: "Conteúdo do primeiro post." });
-        server.create("post", { id: "2", title: "Segundo Post", body: "Conteúdo do segundo post." });
-        server.create("post", { id: "3", title: "Terceiro Post", body: "Conteúdo do terceiro post." });
-        server.create("post", { id: "4", title: "Quarto Post", body: "Conteúdo do quarto post." });
-        server.create("post", { id: "5", title: "Quinto Post", body: "Conteúdo do quinto post." });
-        server.create("post", { id: "6", title: "Sexto Post", body: "Conteúdo do sexto post." });
+        let initialPosts = [];
+        if (typeof window !== "undefined") {
+          const saved = localStorage.getItem("mirage-posts");
+          if (saved) {
+            initialPosts = JSON.parse(saved);
+          }
+        }
+        if (!initialPosts.length) {
+          initialPosts = [
+            { id: "1", title: "Primeiro Post", body: "Conteúdo do primeiro post." },
+            { id: "2", title: "Segundo Post", body: "Conteúdo do segundo post." },
+            { id: "3", title: "Terceiro Post", body: "Conteúdo do terceiro post." },
+            { id: "4", title: "Quarto Post", body: "Conteúdo do quarto post." },
+            { id: "5", title: "Quinto Post", body: "Conteúdo do quinto post." },
+            { id: "6", title: "Sexto Post", body: "Conteúdo do sexto post." },
+          ];
+        }
+        initialPosts.forEach((post: any) => server.create("post", post));
       },
       routes() {
-        this.passthrough();
         this.namespace = "api";
+        this.passthrough((request) => !request.url.startsWith("/api"));
 
         this.get("/posts", (schema) => {
           if (typeof window !== "undefined") {
@@ -45,6 +58,7 @@ export default defineNuxtPlugin(() => {
           const post = schema.find("post", id);
           if (!post) return { error: "Post não encontrado" };
           post.update(attrs);
+          // Salva no localStorage se estiver no client
           if (typeof window !== "undefined") {
             const allPosts = schema.all("post").models.map((m) => m.attrs);
             localStorage.setItem("mirage-posts", JSON.stringify(allPosts));
@@ -59,3 +73,4 @@ export default defineNuxtPlugin(() => {
     });
   }
 });
+*/

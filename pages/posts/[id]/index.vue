@@ -3,12 +3,13 @@ import type { Post } from '~/stores/posts';
 import { ref, onMounted } from 'vue';
 import { useRoute } from '#imports';
 import { NuxtLink } from '#components';
+import { usePostsStorage } from '~/composables/usePostsStorage';
 const route = useRoute();
+const { getById } = usePostsStorage();
 const post = ref<Post|null>(null);
 
-onMounted(async () => {
-  const res = await $fetch<any>(`/api/posts/${route.params.id}`);
-  post.value = res?.post ?? res ?? null;
+onMounted(() => {
+  post.value = getById(route.params.id as string) ?? null;
 });
 </script>
 

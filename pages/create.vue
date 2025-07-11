@@ -18,16 +18,35 @@
 </template>
 
 <script setup lang="ts">
-import { useCreatePost } from '~/composables/useCreatePost';
-import { usePosts } from '~/composables/usePosts';
-const { title, body, image, error, loading, submit } = useCreatePost();
-const { reset } = usePosts();
+import { ref } from 'vue';
+import { usePostsStorage } from '~/composables/usePostsStorage';
+const { add } = usePostsStorage();
+
+const title = ref('');
+const body = ref('');
+const image = ref('');
+const error = ref('');
+const loading = ref(false);
 
 async function onSubmit() {
-  const ok = await submit();
-  if (ok) {
-    reset();
+  error.value = '';
+  loading.value = true;
+  if (!title.value.trim() || !body.value.trim() || !image.value.trim()) {
+    error.value = 'Preencha todos os campos.';
+    loading.value = false;
+    return;
+  }
+  try {
+    add({ title: title.value, body: body.value, image: image.value });
+    title.value = '';
+    body.value = '';
+    image.value = '';
+    error.value = '';
     navigateTo('/posts');
+  } catch (e) {
+    error.value = 'Erro ao criar post.';
+  } finally {
+    loading.value = false;
   }
 }
 </script>
