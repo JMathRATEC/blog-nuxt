@@ -1,4 +1,5 @@
 <script setup lang="ts">
+definePageMeta({ middleware: 'auth' });
 import type { Post } from '~/stores/posts';
 import { ref, onMounted } from 'vue';
 import { useRoute } from '#imports';

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+definePageMeta({ middleware: 'auth' });
 import { ref, onMounted } from 'vue';
 import { useRoute, navigateTo } from '#imports';
 import { NuxtLink } from '#components';

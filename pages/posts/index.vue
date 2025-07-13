@@ -21,6 +21,7 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({ middleware: 'auth' });
 import { usePostsStorage } from '~/composables/usePostsStorage';
 import { ref, computed } from 'vue';
 
